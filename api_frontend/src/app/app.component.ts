@@ -8,7 +8,7 @@ import {ApiService} from './api.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatSidenavContainer, SidebarComponent, MatSidenav, MatSidenavContent, WorkspaceComponent, HeaderComponent],
+  imports: [MatSidenavContainer, SidebarComponent, MatSidenav, MatSidenavContent, WorkspaceComponent, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

@@ -5,7 +5,7 @@ import {CommunicationService} from '../communication.service';
   selector: 'app-header',
   imports: [],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
   selectedComponent: string = 'Home';

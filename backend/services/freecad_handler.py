@@ -29,8 +29,9 @@ def open_geometry(file):
 def return_available_templates():
     template_list = []
     for file in templates_dir.iterdir():
-        cross_section = return_beam_cross_section(file)
-        template_list.append((file.name, cross_section))
+        if file.suffix == ".FCStd":
+            cross_section = return_beam_cross_section(file)
+            template_list.append((file.name, cross_section))
     return template_list
 
 
@@ -52,9 +53,10 @@ def return_template_file_path(name):
 
 
 def set_beam_parameters(beam_type, width, depth, length):
-    file_path = return_template_file_path(beam_type)  # TODO: Sort out difference between file name "rectangular" and cross_section "Rectangular"
-    copy_template(file_path)
-    part = open_geometry(file_path)
+    template_file_path = return_template_file_path(beam_type.lower())  # TODO: Sort out difference between file name "rectangular" and cross_section "Rectangular"
+    beam_file_path = return_beam_file_path()
+    copy_template(template_file_path)
+    part = open_geometry(beam_file_path)
     sketch = part.getObject("Sketch")
     pad = part.getObject("Pad")
     sketch.setDatum("width", FreeCAD.Units.Quantity(str(width) + ' mm'))
@@ -71,8 +73,21 @@ def return_beam_file_path():
             return file
 
 
+def return_beam_stl_file():
+    for file in geometries_dir.iterdir():
+        if file.name == "beam.stl":
+            return file
+
+
 def save_as_step_file():
     step_file_path = str(geometries_dir) + "/beam.step"
     file = return_beam_file_path()
     part = open_geometry(file)
     Part.export([part], step_file_path)
+
+
+def save_as_stl_file():
+    stl_file_path = str(geometries_dir) + "/beam.stl"
+    file = return_beam_file_path()
+    part = open_geometry(file)
+    Part.export([part], stl_file_path)
