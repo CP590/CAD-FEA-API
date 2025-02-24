@@ -1,3 +1,4 @@
+import threading
 from pathlib import Path
 import gmsh
 
@@ -11,6 +12,8 @@ templates_dir = geometries_dir / "templates/"
 # Instances gmsh model
 def initialise_mesh():
     gmsh.initialize()
+    gmsh.option.setNumber("General.Terminal", 0)
+    gmsh.option.setNumber("General.Verbosity", 0)
     gmsh.model.add("model")
 
 
@@ -28,8 +31,12 @@ def generate_mesh():
     return result
 
 
+def return_unv_file_path():
+    return str(geometries_dir) + "/" + "mesh.unv"
+
+
 def parse_unv():
-    unv_file = str(geometries_dir) + "/" + "mesh.unv"
+    unv_file = return_unv_file_path()
     nodes = {}
     elements = {}
     data = [nodes, elements]
@@ -97,6 +104,7 @@ def parse_unv():
         else:
             i += 1
 
+    print('Parse completed successfully')
     return data
 
 
@@ -116,11 +124,13 @@ def add_face_name(id, name):
 
 
 def main_mesh_file():
+    if threading.current_thread() is not threading.main_thread():
+        raise RuntimeError("ERROR: main_mesh_file() is not running in the main thread")
+
     try:
         initialise_mesh()
         import_step_file("beam")
         result = generate_mesh()
-        nodes = parse_unv()
         return result
     except Exception as e:
         print(f"Error during meshing: {e}")
